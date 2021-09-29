@@ -10,7 +10,7 @@ namespace WeatherApp.Pages
 {
     public partial class Index
     {
-        private IWeather customers;
+        private Weather customers;
 
         public string location { get; set; } = "Europe / London";
         public string airData { get; set; } = "no";

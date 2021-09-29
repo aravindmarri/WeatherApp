@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WeatherApp.Interfaces
+namespace WeatherApp.Models
 {
-    public class ICurrent
+    public class Current
     {
         [JsonProperty("last_updated_epoch")]
         public long LastUpdatedEpoch { get; set; }
@@ -24,7 +24,7 @@ namespace WeatherApp.Interfaces
         public long IsDay { get; set; }
 
         [JsonProperty("condition")]
-        public ICondition Condition { get; set; }
+        public Condition Condition { get; set; }
 
         [JsonProperty("wind_mph")]
         public double WindMph { get; set; }

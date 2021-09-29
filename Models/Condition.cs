@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WeatherApp.Interfaces
+namespace WeatherApp.Models
 {
-    public class ICondition
+    public class Condition
     {
         [JsonProperty("text")]
         public string Text { get; set; }
