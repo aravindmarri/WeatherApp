@@ -1,0 +1,40 @@
+﻿@page "/"
+@using WeatherApp.Interfaces
+@using System.Text.Json;
+@using System.Text.Json.Serialization;
+@using Newtonsoft.Json;
+@inject HttpClient Http
+<h1>Hello, world!</h1>
+
+Welcome to your weather app.
+
+<div>My weather </div>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetWeather">Click me !</MudButton>
+@*@if(gotTheData) {
+        <p>@weatherData.</p>
+    }*@
+@code {
+    private IWeather weatherData;
+    public bool gotTheData { get; set; } = false;
+    static readonly HttpClient client = new HttpClient();
+    Uri url = new Uri("https://api.weatherapi.com/v1/current.json?key=f16f6372d6094dbd98a60343212909&q=London&aqi=no");
+    private async Task GetWeather()
+    {
+        HttpResponseMessage response = await client.GetAsync(url);
+
+        if (response.IsSuccessStatusCode)
+
+        {
+
+            string content = await response.Content.ReadAsStringAsync();
+
+            weatherData = JsonConvert.DeserializeObject<IWeather>(content);
+            gotTheData = true;
+
+        }
+        //var url = new Uri("http://api.weatherapi.com/v1/current.json?key=f16f6372d6094dbd98a60343212909&q=London&aqi=no");
+        //Uri UriStr = new Uri("http://192.168.1.5/audio/abc.wmv");
+        //weatherData = await JsonSerializer.Serialize<IWeather>(url);
+        //gotTheData = true;
+    }
+}   
