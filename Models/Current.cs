@@ -21,7 +21,7 @@ namespace WeatherApp.Models
         public double TempF { get; set; }
 
         [JsonProperty("is_day")]
-        public long IsDay { get; set; }
+        public int IsDay { get; set; }
 
         [JsonProperty("condition")]
         public Condition Condition { get; set; }

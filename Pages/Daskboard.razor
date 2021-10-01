@@ -1,0 +1,80 @@
+﻿@page "/"
+@using WeatherApp.Models
+@using System.Text.Json;
+@using System.Text.Json.Serialization;
+@using Newtonsoft.Json;
+@inject HttpClient Http
+
+<link href="/scss/daskboard.css" rel="stylesheet">
+<section class="d-flex flex-column align-items-center @Theme">
+    <h1>Weather App</h1>
+    <h4>@Wishes</h4>
+    <div>
+        <MudTextField T="string" Label="Enter your location" HelperText="Please enter the City names" HelperTextOnFocus="true" Variant="Variant.Outlined" @bind-Text="EnteredCityName" />
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="()=>GetData(EnteredCityName)">Primary</MudButton>
+        <div class="locate"><MudTooltip Text="Locate"><MudFab Color="Color.Primary" Icon="@Icons.Material.Filled.LocationOn" OnClick="GetLocation" aria-label="Pick Your Location" /></MudTooltip></div>
+    </div>
+    @if (gotTheWeatherData && !NotFound)
+    {
+        <section>
+            <h4>@CurrentLocation climate is : <strong>@weatherData.Current.Condition.Text</strong></h4>
+        </section>
+    }
+    else
+    {
+        <h4>Location Not Found</h4>
+    }
+</section>
+
+@code {
+    private Weather weatherData;
+    private GeoLocation LocationData;
+    public string EnteredCityName { get; set; }
+    public string CurrentLocation { get; set; }
+    public bool gotTheWeatherData { get; set; } = false;
+    public bool gotTheLocationData { get; set; } = false;
+    public bool NotFound { get; set; } = false;
+    static readonly HttpClient client = new HttpClient();
+    public string WeatherAPIString { get; set; }
+    public string BaseWeatherUri { get; set; } = "https://api.weatherapi.com/v1/current.json?key=f16f6372d6094dbd98a60343212909&";
+    Uri LocationUrl = new Uri("https://geoip-db.com/json/");
+
+    private async Task GetLocation()
+    {
+        HttpResponseMessage Weatherresponse = await client.GetAsync(LocationUrl);
+
+        if (Weatherresponse.IsSuccessStatusCode)
+        {
+            string Weathercontent = await Weatherresponse.Content.ReadAsStringAsync();
+
+            LocationData = JsonConvert.DeserializeObject<GeoLocation>(Weathercontent);
+            await GetWeatherData(LocationData.City);
+        }
+    }
+    private async Task GetData(string EnteredCityName)
+    {
+        await GetWeatherData(EnteredCityName);
+    }
+    private async Task GetWeatherData(string SearchCity)
+    {
+
+        Uri url = new Uri($"{BaseWeatherUri}q={SearchCity}&aqi=yes");
+
+        HttpResponseMessage response = await client.GetAsync(url);
+
+        if (response.IsSuccessStatusCode)
+        {
+            string content = await response.Content.ReadAsStringAsync();
+
+            weatherData = JsonConvert.DeserializeObject<Weather>(content);
+            CurrentLocation = weatherData.Location.Name;
+            Theme = weatherData.Current.IsDay == 1 ? "dayTheme" : "nightTheme";
+            NotFound = false;
+        }
+        else
+        {
+            NotFound = true;
+        }
+        gotTheWeatherData = true;
+    }
+}   
